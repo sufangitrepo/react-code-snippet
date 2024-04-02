@@ -1,0 +1,21 @@
+function* pureFetchApiSaga(action) {
+  try {
+    const params = Array.isArray(action.payload) ? action.payload : [action.payload];
+    const response = yield call(services[action.service], ...params);
+
+    if (response.data.error) {
+      throw new Error(`${response.data.error}`);
+    } else if (response.data.errors) {
+      throw new Error(response.data.errors);
+    }
+    return { success: true, message: response.data };
+  } catch (err) {
+    if (err.response?.status && (err.response.status === 404 || err.response.status === 403)) {
+      updateLocation(`/404`);
+    }
+    const dataError = err?.response?.data?.errors
+      || err?.response?.data?.error || err?.response?.data?.detail;
+    const errorMessage = dataError || err?.response?.data || err.message;
+    return { success: false, message: errorMessage };
+  }
+}
