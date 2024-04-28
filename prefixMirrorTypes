@@ -1,0 +1,5 @@
+export const prefixMirrorTypes = (prefix, actionsTypes) => {
+  const actionTypes = {};
+  Object.keys(actionsTypes).forEach((type) => { actionTypes[type] = `${prefix}/${type}`; });
+  return actionTypes;
+};
