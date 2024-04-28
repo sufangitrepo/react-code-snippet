@@ -19,3 +19,20 @@ function* pureFetchApiSaga(action) {
     return { success: false, message: errorMessage };
   }
 }
+
+
+
+
+function* fetchApiSaga(action) {
+  const actionName = /(.*)_REQUEST/.exec(action.type)[1];
+
+  const response = yield call(pureFetchApiSaga, action);
+  const actionSuffix = response.success ? 'SUCCESS' : 'FAILURE';
+
+  yield put({
+    type: `${actionName}_${actionSuffix}`,
+    payload: response.message,
+  });
+
+  return response;
+}
